@@ -1,0 +1,49 @@
+{
+  "items": [
+    {
+      "id": "item_BcGTa1hmkOUSwHda8Yc2f",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Hello! How can I assist you today?"
+      ],
+      "interrupted": false
+    },
+    {
+      "id": "item_BcGTeRKGUMzXEXc4zDNgo",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Hey I am just quickly checking the transcription capabilities."
+      ],
+      "interrupted": false
+    },
+    {
+      "id": "item_BcGTjtIqc47KbZMIwi9oe",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Great! I'm ready to help with that. Go ahead and speak, and I'll provide a transcription of our conversation."
+      ],
+      "interrupted": false
+    },
+    {
+      "id": "item_BcGTu7uGOHinFabIq0DCJ",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Cool, I'm just checking whether the speech interaction speed is affected because you haven't transcribed what I'm saying."
+      ],
+      "interrupted": false
+    },
+    {
+      "id": "item_BcGU1Mvnmv533BqEUmCA6",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Understood. The speech interaction speed should remain consistent whether I'm transcribing or not. Your feedback on how it goes is welcome."
+      ],
+      "interrupted": false
+    }
+  ]
+}
