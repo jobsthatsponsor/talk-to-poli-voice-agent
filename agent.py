@@ -7,6 +7,7 @@ from livekit.plugins import (
     openai,
     noise_cancellation,
 )
+from openai.types.beta.realtime.session import TurnDetection
 
 load_dotenv()
 
@@ -19,12 +20,17 @@ class Assistant(Agent):
 async def entrypoint(ctx: agents.JobContext):
     session = AgentSession(
         llm=openai.realtime.RealtimeModel.with_azure(
-            voice="coral",
+            voice="shimmer",
             azure_deployment="gpt-4o-realtime-preview",
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            api_version=os.getenv("AZURE_OPENAI_API_VERSION")
-            )
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+            turn_detection=TurnDetection(
+                type="semantic_vad",
+                interrupt_response=True
+            ),
+            input_audio_transcription=None
+        )
     )
 
     await session.start(
