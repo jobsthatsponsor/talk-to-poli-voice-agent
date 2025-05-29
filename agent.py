@@ -4,10 +4,12 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 
+from google.genai.types import AudioTranscriptionConfig
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import (
     openai,
+    google,
     noise_cancellation,
 )
 from openai.types.beta.realtime.session import TurnDetection, InputAudioTranscription
@@ -71,23 +73,33 @@ async def entrypoint(ctx: agents.JobContext):
 
     ctx.add_shutdown_callback(write_transcript)
 
+    # session = AgentSession(
+    #     llm=openai.realtime.RealtimeModel.with_azure(
+    #         voice="shimmer",
+    #         azure_deployment="gpt-4o-realtime-preview",
+    #         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+    #         api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    #         api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+    #         turn_detection=TurnDetection(
+    #             type="server_vad",
+    #             threshold=0.5,
+    #             silence_duration_ms=1000,
+    #             interrupt_response=True
+    #         ),
+    #         input_audio_transcription=InputAudioTranscription(
+    #             model="gpt-4o-transcribe"
+    #         )
+    #     )
+    # )
+
     session = AgentSession(
-        llm=openai.realtime.RealtimeModel.with_azure(
-            voice="shimmer",
-            azure_deployment="gpt-4o-realtime-preview",
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-            turn_detection=TurnDetection(
-                type="server_vad",
-                threshold=0.5,
-                silence_duration_ms=1000,
-                interrupt_response=True
-            ),
-            input_audio_transcription=InputAudioTranscription(
-                model="gpt-4o-transcribe"
-            )
-        )
+        llm=google.beta.realtime.RealtimeModel(
+            api_key=str(os.getenv("GOOGLE_API_KEY")),
+            model="gemini-2.5-flash-preview-native-audio-dialog",
+            voice="Erinome",
+            input_audio_transcription=AudioTranscriptionConfig(),
+            output_audio_transcription=AudioTranscriptionConfig(),
+        ),
     )
 
     await session.start(
