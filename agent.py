@@ -4,7 +4,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 
-from livekit import agents, api
+from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import (
     openai,
@@ -40,28 +40,6 @@ class Assistant(Agent):
 
 
 async def entrypoint(ctx: agents.JobContext):
-
-    # # Set up recording
-    # req = api.RoomCompositeEgressRequest(
-    #     room_name=ctx.room.name,
-    #     audio_only=True,
-    #     file_outputs=[api.EncodedFileOutput(
-    #         file_type=api.EncodedFileType.OGG,
-    #         filepath="my-room-test.ogg",
-    #         s3=api.S3Upload(
-    #             bucket="recordings",
-    #             region="eu-west-2",
-    #             endpoint=os.getenv("S3_SUPABASE_ENDPOINT"),
-    #             access_key=os.getenv("S3_ACCESS_KEY_ID"),
-    #             secret=os.getenv("S3_SECRET_ACCESS_KEY"),
-    #             force_path_style=True
-    #         ),
-    #     )],
-    # )
-
-    # lkapi = api.LiveKitAPI()
-    # await lkapi.egress.start_room_composite_egress(req)
-    # await lkapi.aclose()
 
     async def write_transcript():
         # Initialise Supabase client
