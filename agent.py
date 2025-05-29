@@ -11,6 +11,8 @@ from livekit.plugins import (
     noise_cancellation,
 )
 from openai.types.beta.realtime.session import TurnDetection, InputAudioTranscription
+from supabase import create_client, Client
+
 
 load_dotenv()
 
@@ -61,15 +63,32 @@ async def entrypoint(ctx: agents.JobContext):
     await lkapi.egress.start_room_composite_egress(req)
 
     async def write_transcript():
+        # Initialise Supabase client
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+
+        if not url or not key:
+            raise ValueError("SUPABASE_URL and SUPABASE_KEY environment variables must be set")
+
+        supabase: Client = create_client(url, key)
+
         current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"transcript_{ctx.room.name}_{current_date}.json"
 
-        # This example writes to the temporary directory, but you can save to any location
-        filename = f"transcripts/transcript_{ctx.room.name}_{current_date}.json"
+        # Convert transcript to JSON bytes
+        transcript_data = json.dumps(session.history.to_dict(), indent=2).encode('utf-8')
 
-        with open(filename, 'w') as f:
-            json.dump(session.history.to_dict(), f, indent=2)
-
-        print(f"Transcript for {ctx.room.name} saved to {filename}")
+        # Upload to Supabase storage
+        try:
+            supabase.storage.from_("transcripts").upload(
+                file=transcript_data,
+                path=filename,
+                file_options={"content-type": "application/json", "upsert": "false"}
+            )
+            print(f"Transcript for {ctx.room.name} saved to Supabase: {filename}")
+        except Exception as e:
+            print(f"Error uploading transcript: {e}")
+            raise Exception(f"Failed to upload transcript: {e}")
 
     ctx.add_shutdown_callback(write_transcript)
 
