@@ -20,11 +20,11 @@ load_dotenv()
 def read_instructions():
     """Read instructions from instructions.md file."""
     instructions_path = Path(__file__).parent / "instructions.md"
-    
+
     if not instructions_path.exists():
         print(f"Warning: instructions.md not found at {instructions_path}")
         return "You are a helpful voice AI assistant."
-    
+
     try:
         with open(instructions_path, 'r', encoding='utf-8') as f:
             return f.read()
@@ -101,7 +101,9 @@ async def entrypoint(ctx: agents.JobContext):
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
             api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
             turn_detection=TurnDetection(
-                type="semantic_vad",
+                type="server_vad",
+                threshold=0.5,
+                silence_duration_ms=1000,
                 interrupt_response=True
             ),
             input_audio_transcription=InputAudioTranscription(
