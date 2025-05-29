@@ -2,6 +2,7 @@ import os
 import json
 from datetime import datetime
 from dotenv import load_dotenv
+from pathlib import Path
 
 from livekit import agents, api
 from livekit.agents import AgentSession, Agent, RoomInputOptions
@@ -14,9 +15,26 @@ from openai.types.beta.realtime.session import TurnDetection, InputAudioTranscri
 load_dotenv()
 
 
+def read_instructions():
+    """Read instructions from instructions.md file."""
+    instructions_path = Path(__file__).parent / "instructions.md"
+    
+    if not instructions_path.exists():
+        print(f"Warning: instructions.md not found at {instructions_path}")
+        return "You are a helpful voice AI assistant."
+    
+    try:
+        with open(instructions_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"Error reading instructions.md: {e}")
+        return "You are a helpful voice AI assistant."
+
+
 class Assistant(Agent):
     def __init__(self) -> None:
-        super().__init__(instructions="You are a helpful voice AI assistant.")
+        instructions = read_instructions()
+        super().__init__(instructions=instructions)
 
 
 async def entrypoint(ctx: agents.JobContext):
@@ -87,7 +105,7 @@ async def entrypoint(ctx: agents.JobContext):
     await ctx.connect()
 
     await session.generate_reply(
-        instructions="Greet the user and offer your assistance in English."
+        instructions="Greet the user warmly as Poli, introduce yourself briefly as a recruiter helping people find visa-sponsored jobs in the UK, and ask how you can help them with their job search today. Keep it concise and conversational."
     )
 
 
