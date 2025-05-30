@@ -8,11 +8,12 @@ from google.genai.types import AudioTranscriptionConfig
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import (
-    openai,
+    # openai,
     google,
     noise_cancellation,
 )
-from openai.types.beta.realtime.session import TurnDetection, InputAudioTranscription
+
+# from openai.types.beta.realtime.session import TurnDetection, InputAudioTranscription
 from supabase import create_client, Client
 
 
@@ -99,7 +100,11 @@ async def entrypoint(ctx: agents.JobContext):
             voice="Erinome",
             input_audio_transcription=AudioTranscriptionConfig(),
             output_audio_transcription=AudioTranscriptionConfig(),
-        ),
+
+            # These are still not working despite being available in the plugin (keeping for future use)
+            # enable_affective_dialog=True,
+            # proactivity=True
+        )
     )
 
     await session.start(
